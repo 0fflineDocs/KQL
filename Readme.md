@@ -49,7 +49,7 @@ _____
 | where ActionType startswith 'ExploitGuard' and ActionType !contains 'NetworkProtection'
 
 #### Scripts after download  
-DeviceProcessEvents  
+**DeviceProcessEvents**  
 | where InitiatingProcessFileName in ("iexplore.exe","chrome.exe","msedge.exe","firefox.exe")  
 | where ProcessCommandLine contains "wscript.exe"  
 
