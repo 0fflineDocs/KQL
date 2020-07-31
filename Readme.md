@@ -38,6 +38,16 @@ ____
 | summarize Titles=makeset(Title) by DeviceName, DeviceId, bin(Timestamp, 1d)  
 | limit 100  
 
+_____
+
+#### Controlled Folder Access  
+**DeviceEvents**  
+| where ActionType in ('ControlledFolderAccessViolationAudited','ControlledFolderAccessViolationBlocked')
+
+#### Exploit Protection / Network Protection  
+**DeviceEvents**  
+| where ActionType startswith 'ExploitGuard' and ActionType !contains 'NetworkProtection'
+
 ____  
 ### Azure AD
 
