@@ -1,1 +1,1 @@
-:Cheer:
+KQL_Cheat_Sheet
