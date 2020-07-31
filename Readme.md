@@ -2,10 +2,20 @@
 
 ### Defender ATP
 
+#### TVM Vulnerabilites
+
+**DeviceTvmSoftwareInventoryVulnerabilities**  
+| project  DeviceName, SoftwareName, CveId, SoftwareVersion, VulnerabilitySeverityLevel   
+| join (DeviceTvmSoftwareVulnerabilitiesKB  
+| project AffectedSoftware, VulnerabilityDescription , CveId , CvssScore , IsExploitAvailable) on CveId   
+| project CveId , SoftwareName , SoftwareVersion , VulnerabilityDescription , VulnerabilitySeverityLevel, IsExploitAvailable , CvssScore   
+| distinct SoftwareName , SoftwareVersion, CveId, VulnerabilityDescription , VulnerabilitySeverityLevel, IsExploitAvailable    
+| sort by SoftwareName asc , SoftwareVersion  
+
 #### UEFI SCAN  
 URL: https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-microsoft-defender-atp-protection-to-a-new-level/
 
-**DeviceEvents**
+**DeviceEvents**  
 | where ActionType == "AntivirusDetection"  
 | extend ParsedFields=parse_json(AdditionalFields)  
 | extend ThreatName=tostring(ParsedFields.ThreatName)  
@@ -13,7 +23,7 @@ URL: https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-micr
 | project ThreatName=tostring(ParsedFields.ThreatName), FileName, SHA1, DeviceName, Timestamp  
 | limit 100  
 
-**DeviceAlertEvents**
+**DeviceAlertEvents**  
 | where Title has "UEFI"  
 | summarize Titles=makeset(Title) by DeviceName, DeviceId, bin(Timestamp, 1d)  
 | limit 100  
@@ -25,10 +35,10 @@ ____
   
 *Changes to a conditional access-policy and by who*
 
-**AuditLogs**
+**AuditLogs**  
 | where Category == "Policy"  
 | project  ActivityDateTime, ActivityDisplayName, TargetResources[0].displayName, InitiatedBy.user.userPrincipalName  
 
-**SigninLogs**
+**SigninLogs**  
 | where ConditionalAccessStatus == "success"  
 | project AppDisplayName, Identity, ConditionalAccessStatus    
