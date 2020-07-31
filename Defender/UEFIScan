@@ -1,0 +1,17 @@
+URL: https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-microsoft-defender-atp-protection-to-a-new-level/
+
+DeviceEvents
+| where ActionType == "AntivirusDetection"
+| extend ParsedFields=parse_json(AdditionalFields)
+| extend ThreatName=tostring(ParsedFields.ThreatName)
+| where ThreatName contains_cs "UEFI"
+| project ThreatName=tostring(ParsedFields.ThreatName),
+ FileName, SHA1, DeviceName, Timestamp
+| limit 100
+
+------------
+
+DeviceAlertEvents
+| where Title has "UEFI"
+| summarize Titles=makeset(Title) by DeviceName, DeviceId, bin(Timestamp, 1d)
+| limit 100
