@@ -4,6 +4,16 @@
 
 #### TVM Vulnerabilites
 
+###### (critical 1days) 
+**let newVuln = DeviceTvmSoftwareVulnerabilitiesKB**  
+| where VulnerabilitySeverityLevel == "Critical"  
+| where LastModifiedTime >ago(1day); DeviceTvmSoftwareInventoryVulnerabilities   
+| join newVuln on CveId  
+| summarize dcount(DeviceId) by DeviceName, DeviceId, Timestamp=LastModifiedTime, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable  
+| project Timestamp, DeviceName, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, DeviceId
+
+###### URL: https://github.com/jangeisbauer/AdvancedHunting/blob/master/Detected%20new%20Vuln%20in%20Enterprise   
+  
 **DeviceTvmSoftwareInventoryVulnerabilities**  
 | project  DeviceName, SoftwareName, CveId, SoftwareVersion, VulnerabilitySeverityLevel   
 | join (DeviceTvmSoftwareVulnerabilitiesKB  
@@ -11,9 +21,9 @@
 | project CveId , SoftwareName , SoftwareVersion , VulnerabilityDescription , VulnerabilitySeverityLevel, IsExploitAvailable , CvssScore   
 | distinct SoftwareName , SoftwareVersion, CveId, VulnerabilityDescription , VulnerabilitySeverityLevel, IsExploitAvailable    
 | sort by SoftwareName asc , SoftwareVersion  
-
+____  
 #### UEFI SCAN  
-URL: https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-microsoft-defender-atp-protection-to-a-new-level/
+###### URL: https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-microsoft-defender-atp-protection-to-a-new-level/
 
 **DeviceEvents**  
 | where ActionType == "AntivirusDetection"  
