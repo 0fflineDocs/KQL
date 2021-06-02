@@ -1,1 +1,13 @@
-Test
+Service Accounts in Domain Admins (Defender for Identity)
+let timeframe = 30d; let srvc_list = dynamic(["svc_account1@contoso.com","svc_account2@contoso.com","svc_account3@contoso.com","svc_account4@contoso.com","svc_account5@contoso.com","svc_account6@contoso.com"]); IdentityLogonEvents | where Timestamp >= ago(timeframe) | where AccountUpn in~ (srvc_list) | summarize Count = count() by AccountName, DeviceName, Protocol
+https://m365internals.com/2021/03/27/start-having-visibility-in-service-accounts-with-defender-for-identity/
+
+//Find out what users are disabled. 
+IdentityInfo | where IsAccountEnabled == “0” | summarize arg_max(AccountName,*) by AccountUpn
+
+// Track service creation activities on domain controllers 
+IdentityDirectoryEvents | where ActionType == "Service creation" | extend ServiceName = AdditionalFields["ServiceName"] | extend ServiceCommand = AdditionalFields["ServiceCommand"] | project Timestamp, ActionType, Protocol, DC = TargetDeviceName, ServiceName, ServiceCommand, AccountDisplayName, AccountSid, AdditionalFields | limit 100
+
+MDF + MDE
+// Enrich logon events with network activities happening on the device at the same time 
+IdentityLogonEvents | where Timestamp > ago(7d) | project LogonTime = Timestamp, DeviceName, AccountName, Application, LogonType | join kind=inner ( DeviceNetworkEvents | where Timestamp > ago(7d) | project NetworkConnectionTime = Timestamp, DeviceName, AccountName = InitiatingProcessAccountName, InitiatingProcessFileName, InitiatingProcessCommandLine ) on DeviceName, AccountName | where LogonTime - NetworkConnectionTime between (-2m .. 2m)
