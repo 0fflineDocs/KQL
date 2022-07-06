@@ -1,4 +1,4 @@
-URL: https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-microsoft-defender-atp-protection-to-a-new-level/
+//https://www.microsoft.com/security/blog/2020/06/17/uefi-scanner-brings-microsoft-defender-atp-protection-to-a-new-level/
 
 DeviceEvents
 | where ActionType == "AntivirusDetection"
