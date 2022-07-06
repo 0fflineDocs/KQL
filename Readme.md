@@ -1,6 +1,6 @@
 ## KQL_Cheat_Sheet
 
-### Defender ATP
+### Defender for Endpoint
 
 #### TVM Vulnerabilites
 
