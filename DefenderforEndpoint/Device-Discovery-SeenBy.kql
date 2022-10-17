@@ -1,5 +1,6 @@
-## Find what endpoints have been seen by other endpoints in MDE (Device Discovery)
+// Find what endpoints have been seen by other endpoints in MDE (Device Discovery)
 
+// Onboarded devices as seen by
 DeviceInfo
 | where OnboardingStatus != "Onboarded" 
 | summarize arg_max(Timestamp, *) by DeviceId 
@@ -8,7 +9,7 @@ DeviceInfo
 | invoke SeenBy() 
 | project DeviceId, DeviceName, DeviceType, OSVersion, Model, SeenBy  
 
-## As Seen by (Mobile)
+// Mobiles that can be onboarded
 DeviceInfo
 | where OnboardingStatus != "can be Onboarded" and DeviceType contains "Mobile"
 | summarize arg_max(Timestamp, *) by DeviceId 
