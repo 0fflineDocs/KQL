@@ -18,6 +18,7 @@ DeviceInfo
 | invoke SeenBy() 
 | project DeviceId, DeviceName, DeviceType, OSVersion, Model, SeenBy  
 
+// Specific device
 let Date = datetime(example-date);
 let DeviceName = "example-device-name";
 // List IP addresses used on or before the specified date
