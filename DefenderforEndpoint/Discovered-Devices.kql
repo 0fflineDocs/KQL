@@ -1,0 +1,28 @@
+## Find what endpoints have been seen by other endpoints in MDE (Device Discovery)
+
+DeviceInfo
+| where OnboardingStatus != "Onboarded" 
+| summarize arg_max(Timestamp, *) by DeviceId 
+| where isempty(MergedToDeviceId) 
+| limit 100 
+| invoke SeenBy() 
+| project DeviceId, DeviceName, DeviceType, OSVersion, Model, SeenBy  
+
+## As Seen by (Mobile)
+DeviceInfo
+| where OnboardingStatus != "can be Onboarded" and DeviceType contains "Mobile"
+| summarize arg_max(Timestamp, *) by DeviceId 
+| where isempty(MergedToDeviceId) 
+| limit 1000 
+| invoke SeenBy() 
+| project DeviceId, DeviceName, DeviceType, OSVersion, Model, SeenBy  
+
+let Date = datetime(example-date);
+let DeviceName = "example-device-name";
+// List IP addresses used on or before the specified date
+AssignedIPAddresses(DeviceName, Date)
+| project DeviceName, IPAddress, AssignedTime = Timestamp 
+// Get all network events on devices with the assigned IP addresses as the destination addresses
+| join kind=inner DeviceNetworkEvents on $left.IPAddress == $right.RemoteIP
+// Get only network events around the time the IP address was assigned
+| where Timestamp between ((AssignedTime - 1h) .. (AssignedTime + 1h))
