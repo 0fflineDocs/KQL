@@ -1,0 +1,8 @@
+// Agregate Attack Surface Reduction rules events in M365 Defender Advanced Hunting, in 1h time chunks to display in time line chart.
+DeviceEvents| where ActionType startswith "Asr"| summarize count() by ActionType, bin(Timestamp, 1h)| render timechart
+
+// Count Attack Surface Reduction rules events.
+DeviceEvents| where ActionType startswith "Asr"| summarize count() by ActionType| order by count_ desc
+
+// Get latest events for a specific Attack Surface Reduction rule.
+DeviceEvents| where ActionType == "AsrOfficeCommAppChildProcessAudited"
