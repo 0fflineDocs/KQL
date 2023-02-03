@@ -1,4 +1,5 @@
-*Legacy Update Compliance (Azure Marketplace)*
+Legacy Update Compliance (Azure Marketplace)
+
 // Feature Update deployment issues
 WaaSDeploymentStatus | where UpdateCategory == "Feature" | where DeploymentStatus == "Failed" or DeploymentError != ""
 
