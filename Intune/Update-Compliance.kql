@@ -1,0 +1,45 @@
+// Update Alerts
+UCUpdateAlert
+| summarize count() by AlertSubtype
+| render columnchart
+
+// Safeguard Hold - General
+UCUpdateAlert
+| where UpdateCategory == "WindowsFeatureUpdate" and AlertSubtype == "SafeguardHold"
+| summarize count() by TargetVersion
+
+// Safeguard Hold - Detailed 
+let _SafeguardHold = "SafeguardHold";
+let _SafeguardHoldID = "ALL";
+let SafeguardHolds = UCUpdateAlert
+    | where AlertSubtype == _SafeguardHold
+    | extend SafeguardHoldIDs = parse_json(AlertData).safeguardHoldIDs
+    | extend TotalSafeguards = array_length(SafeguardHoldIDs)
+    | mv-expand SafeguardHoldID=SafeguardHoldIDs
+    | extend SafeguardHoldID=iff(isempty(SafeguardHoldID), "Unknown", tostring(SafeguardHoldID))
+    | extend DeviceDetail = "View more"
+    | summarize arg_max(TimeGenerated, *) by AzureADDeviceId, SafeguardHoldID
+    | summarize DeviceCount=count(AzureADDeviceId) by SafeguardHoldID, DeviceDetail
+    | where iff(_SafeguardHoldID has "ALL", true, _SafeguardHoldID has SafeguardHoldID)
+    | order by DeviceCount desc
+    | project-reorder SafeguardHoldID, DeviceCount, DeviceDetail;
+SafeguardHolds;
+
+// Safeguard Hold (datetime in query)
+let _SnapshotTime = datetime(2023-01-01T06:00:00Z);
+let _SafeguardHold = "SafeguardHold";
+let _SafeguardHoldID = "ALL";
+let SafeguardHolds = UCUpdateAlert
+    | where TimeGenerated >= _SnapshotTime
+    | where AlertSubtype == _SafeguardHold
+    | extend SafeguardHoldIDs = parse_json(AlertData).safeguardHoldIDs
+    | extend TotalSafeguards = array_length(SafeguardHoldIDs)
+    | mv-expand SafeguardHoldID=SafeguardHoldIDs
+    | extend SafeguardHoldID=iff(isempty(SafeguardHoldID), "Unknown", tostring(SafeguardHoldID))
+    | extend DeviceDetail = "View more"
+    | summarize arg_max(TimeGenerated, *) by AzureADDeviceId, SafeguardHoldID
+    | summarize DeviceCount=count(AzureADDeviceId) by SafeguardHoldID, DeviceDetail
+    | where iff(_SafeguardHoldID has "ALL", true, _SafeguardHoldID has SafeguardHoldID)
+    | order by DeviceCount desc
+    | project-reorder SafeguardHoldID, DeviceCount, DeviceDetail;
+SafeguardHolds;
