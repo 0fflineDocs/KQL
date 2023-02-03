@@ -1,5 +1,3 @@
-[Audit Logs]
-
 // All audit events sorted 
 IntuneAuditLogs 
 |summarize Auditevents = count() by OperationName 
@@ -28,8 +26,6 @@ IntuneAuditLogs
 | project Time = TimeGenerated, Policy, Configuration, ['New Value'], ['Old Value'], User
 | sort by Time desc
 
-[Operational Logs]
-
 // Managed Device Operations
 IntuneOperationalLogs
 | where OperationName contains "Managed Device"
@@ -55,7 +51,7 @@ IntuneOperationalLogs
 | summarize count() by OsType 
 | render piechart  
 
-// Failed Enrollment by OS
+// Failed Enrollments by OS
 IntuneOperationalLogs
 | extend DeviceId = tostring(todynamic(Properties).IntuneDeviceId)
 | extend OS = tostring(todynamic(Properties).Os)
@@ -71,8 +67,23 @@ IntuneOperationalLogs
 | project ['Time of Enrollment'], ['Enrollment Type'], OS, ['Intune Device ID'], ['Failure Reason']
 | sort by ['Time of Enrollment'] desc
 
-[Compliance]
+// Successfull Enrollments by OS
+IntuneOperationalLogs
+| extend DeviceId = tostring(todynamic(Properties).IntuneDeviceId)
+| extend OS = tostring(todynamic(Properties).Os)
+| extend ['Failure Reason'] = tostring(todynamic(Properties).FailureReason)
+| extend ['Intune Device ID'] = tostring(todynamic(Properties).IntuneDeviceId)
+| extend ['Time of Enrollment String'] = tostring(todynamic(Properties).EnrollmentTimeUTC)
+| extend Date=format_datetime(todatetime(['Time of Enrollment String']), "dd.MM.yyyy")
+| extend Time=format_datetime(todatetime(['Time of Enrollment String']), "hh:mm tt")
+| extend ['Time of Enrollment']=strcat(Date," ",Time)
+| extend ['Enrollment Type'] = tostring(todynamic(Properties).EnrollmentType)
+| where Result == "Success"
+| where OperationName has "Enrollment"
+| project ['Time of Enrollment'], ['Enrollment Type'], OS, ['Intune Device ID'], Result
+| sort by ['Time of Enrollment'] desc
 
+// Summarize and count non-compliant per category
 let ComplianceLogs= 
 IntuneOperationalLogs  
 | where OperationName == "Compliance"  
