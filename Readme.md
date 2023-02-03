@@ -1,7 +1,7 @@
 ## KQL Queries
 
-#### Intune
+#### Azure AD
 #### Defender for Endpoint
 #### Defender for Identity
-#### Azure AD
+#### Intune
 #### Sentinel
