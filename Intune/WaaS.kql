@@ -1,0 +1,39 @@
+Legacy Update Compliance (Azure Marketplace)
+Feature Update deployment issues
+WaaSDeploymentStatus | where UpdateCategory == "Feature" | where DeploymentStatus == "Failed" or DeploymentError != ""
+
+Deferral configurations for Feature Update
+WaaSUpdateStatus | summarize count(ComputerID) by FeatureDeferralDays | render columnchart
+
+Pause configurations for Feature Update
+WaaSUpdateStatus | summarize count(ComputerID) by FeaturePauseState | render columnchart
+
+Devices pending reboot to complete feature updates
+WaaSDeploymentStatus | where UpdateCategory == "Feature" | where DetailedStatus in ("Reboot required", "Reboot pending")
+
+Devices with a safeguard hold
+WaaSDeploymentStatus | where DetailedStatus == "Safeguard Hold"
+
+Target build distribution of devices with a safeguard hold
+WaaSDeploymentStatus | where DetailedStatus == "Safeguard Hold" | summarize count(ComputerID) by TargetBuild | render piechart
+
+Security Update Deployment Issues
+WaaSDeploymentStatus | where UpdateCategory == "Quality" | where DeploymentStatus == "Failed" or DeploymentError != ""
+
+Deferral configurations for Quality Update
+WaaSUpdateStatus | summarize count(ComputerID) by QualityDeferralDays | render columnchart
+
+Pause configurations for Quality Update
+WaaSUpdateStatus | summarize count(ComputerID) by QualityPauseState | render columnchart
+
+Devices pending reboot to complete security updates
+WaaSDeploymentStatus | where UpdateCategory == "Quality" | where DetailedStatus in ("Reboot required", "Reboot pending")
+
+OS Edition distribution for the devices
+WaaSUpdateStatus | summarize DeviceCount = count() by OSEdition | render table
+
+Inventory of devices on Insider builds
+WaaSInsiderStatus
+
+Last scan time distribution
+WaaSUpdateStatus | union WaaSInsiderStatus | extend LastSca
