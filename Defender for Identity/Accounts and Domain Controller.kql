@@ -3,7 +3,7 @@
 let timeframe = 30d; let srvc_list = dynamic(["svc_account1@contoso.com","svc_account2@contoso.com","svc_account3@contoso.com","svc_account4@contoso.com","svc_account5@contoso.com","svc_account6@contoso.com"]); IdentityLogonEvents | where Timestamp >= ago(timeframe) | where AccountUpn in~ (srvc_list) | summarize Count = count() by AccountName, DeviceName, Protocol
 
 //Find out what users are disabled. 
-IdentityInfo | where IsAccountEnabled == “0” | summarize arg_max(AccountName,*) by AccountUpn
+IdentityInfo | where IsAccountEnabled == "0" | summarize arg_max(AccountName,*) by AccountUpn
 
 // Track service creation activities on domain controllers 
 IdentityDirectoryEvents | where ActionType == "Service creation" | extend ServiceName = AdditionalFields["ServiceName"] | extend ServiceCommand = AdditionalFields["ServiceCommand"] | project Timestamp, ActionType, Protocol, DC = TargetDeviceName, ServiceName, ServiceCommand, AccountDisplayName, AccountSid, AdditionalFields | limit 100
