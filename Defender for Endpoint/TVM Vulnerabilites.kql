@@ -2,7 +2,7 @@
 
 let newVuln = DeviceTvmSoftwareVulnerabilitiesKB
 | where VulnerabilitySeverityLevel == "Critical"
-| where LastModifiedTime >ago(1day); DeviceTvmSoftwareInventoryVulnerabilities
+| where LastModifiedTime >ago(1day); DeviceTvmSoftwareVulnerabilities
 | join newVuln on CveId
 | summarize dcount(DeviceId) by DeviceName, DeviceId, Timestamp=LastModifiedTime, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable
 | project Timestamp, DeviceName, SoftwareName, SoftwareVendor, SoftwareVersion, VulnerabilitySeverityLevel, CvssScore, IsExploitAvailable, DeviceId
