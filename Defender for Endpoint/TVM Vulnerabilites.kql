@@ -9,7 +9,7 @@ let newVuln = DeviceTvmSoftwareVulnerabilitiesKB
 
 //URL: https://github.com/jangeisbauer/AdvancedHunting/blob/master/Detected%20new%20Vuln%20in%20Enterprise
 
-DeviceTvmSoftwareInventoryVulnerabilities
+DeviceTvmSoftwareVulnerabilities
 | project DeviceName, SoftwareName, CveId, SoftwareVersion, VulnerabilitySeverityLevel
 | join (DeviceTvmSoftwareVulnerabilitiesKB
 | project AffectedSoftware, VulnerabilityDescription , CveId , CvssScore , IsExploitAvailable) on CveId
