@@ -1,5 +1,11 @@
-// Policies that override threat protection in Defender for Office 365
+// Summarize policies that override threat protection in Defender for Office 365
 EmailEvents
 | where isnotempty(ThreatTypes) and
 OrgLevelAction == "Allow"
 | summarize count() by OrgLevelPolicy
+
+// Project details for the overriding threats
+EmailEvents
+| where isnotempty(ThreatTypes) and OrgLevelAction == "Allow"
+| project SenderMailFromAddress, SenderFromAddress, ThreatTypes, AuthenticationDetails, Connectors, OrgLevelAction, OrgLevelPolicy
+| order by OrgLevelPolicy
