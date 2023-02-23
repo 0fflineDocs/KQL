@@ -1,0 +1,5 @@
+// Policies that override threat protection in Defender for Office 365
+EmailEvents
+| where isnotempty(ThreatTypes) and
+OrgLevelAction == "Allow"
+| summarize count() by OrgLevelPolicy
