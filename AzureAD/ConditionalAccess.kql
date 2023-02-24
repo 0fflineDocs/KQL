@@ -6,7 +6,7 @@ SigninLogs
 | where ConditionalAccessStatus == "success"
 | project AppDisplayName, Identity, ConditionalAccessStatus  
 
-Conditional Access - Users allowed and users blocked
+// Conditional Access - Users allowed and users blocked
 SigninLogs
 | where TimeGenerated > ago (30d)
 | project TimeGenerated, ConditionalAccessPolicies
@@ -16,7 +16,7 @@ SigninLogs
 | summarize CAResults=make_set(CAResult) by CAPolicyName
 | where CAResults !has "success" and CAResults !has "failure"
 
-Conditional Access - Failures
+// Conditional Access - Failures
 SigninLogs
 | where TimeGenerated > ago (30d)
 | project TimeGenerated, ConditionalAccessPolicies, ResultType, ResultDescription
@@ -27,7 +27,7 @@ SigninLogs
 | summarize CAFailureCount=count()by CAPolicyName, ResultType, ResultDescription
 | sort by CAFailureCount desc 
 
-Conditional Access - Failures (Graphical views)
+// Conditional Access - Failures (Graphical views)
 let start = now(-90d);
 let end = now();
 let timeframe= 12h;
