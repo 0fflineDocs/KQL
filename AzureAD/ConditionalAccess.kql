@@ -5,3 +5,35 @@ AuditLogs
 SigninLogs
 | where ConditionalAccessStatus == "success"
 | project AppDisplayName, Identity, ConditionalAccessStatus  
+
+Conditional Access - Users allowed and users blocked
+SigninLogs
+| where TimeGenerated > ago (30d)
+| project TimeGenerated, ConditionalAccessPolicies
+| mv-expand ConditionalAccessPolicies
+| extend CAResult = tostring(ConditionalAccessPolicies.result)
+| extend CAPolicyName = tostring(ConditionalAccessPolicies.displayName)
+| summarize CAResults=make_set(CAResult) by CAPolicyName
+| where CAResults !has "success" and CAResults !has "failure"
+
+Conditional Access - Failures
+SigninLogs
+| where TimeGenerated > ago (30d)
+| project TimeGenerated, ConditionalAccessPolicies, ResultType, ResultDescription
+| mv-expand ConditionalAccessPolicies
+| extend CAResult = tostring(ConditionalAccessPolicies.result)
+| extend CAPolicyName = tostring(ConditionalAccessPolicies.displayName)
+| where CAResult == "failure"
+| summarize CAFailureCount=count()by CAPolicyName, ResultType, ResultDescription
+| sort by CAFailureCount desc 
+
+Conditional Access - Failures (Graphical views)
+let start = now(-90d);
+let end = now();
+let timeframe= 12h;
+SigninLogs
+| project TimeGenerated, ResultType, ConditionalAccessPolicies
+| where ResultType == 53003
+| extend FailedPolicy = tostring(ConditionalAccessPolicies[0].displayName)
+| make-series FailureCount = count() default=0 on TimeGenerated in range(start,end, timeframe) by FailedPolicy
+| render timechart 
