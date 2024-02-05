@@ -1,3 +1,5 @@
+// iOS/iPadOS
+
 IntuneDevices
 | where OS contains "iOS/iPadOS"
 | summarize dcount(DeviceId) by OSVersion
