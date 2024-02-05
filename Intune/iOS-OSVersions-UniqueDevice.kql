@@ -1,4 +1,4 @@
 IntuneDevices
-| where OS contains "iOS"
+| where OS contains "iOS/iPadOS"
 | summarize dcount(DeviceId) by OSVersion
 | render columnchart
