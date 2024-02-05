@@ -1,24 +1,29 @@
-IntuneDevices
-| where OS contains "Android (device administrator)"
-| summarize dcount(DeviceId) by OSVersion
-| render columnchart
-
-IntuneDevices
-| where OS contains "Android (personally-owned work profile)"
-| summarize dcount(DeviceId) by OSVersion
-| render columnchart
-
+// Corporate-Owned Work Profile
 IntuneDevices
 | where OS contains "Android (corporate-owned work profile)"
 | summarize dcount(DeviceId) by OSVersion
 | render columnchart
 
+// Fully Managed
+IntuneDevices
+| where OS contains "Android (fully managed)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
+
+// ADedicated
 IntuneDevices
 | where OS contains "Android (dedicated)"
 | summarize dcount(DeviceId) by OSVersion
 | render columnchart
 
+// Personally-owned Work Profile
 IntuneDevices
-| where OS contains "Android (fully managed)"
+| where OS contains "Android (personally-owned work profile)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
+
+// Device Administrator
+IntuneDevices
+| where OS contains "Android (device administrator)"
 | summarize dcount(DeviceId) by OSVersion
 | render columnchart
