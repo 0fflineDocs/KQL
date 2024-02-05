@@ -10,7 +10,7 @@ IntuneDevices
 | summarize dcount(DeviceId) by OSVersion
 | render columnchart
 
-// ADedicated
+// Dedicated
 IntuneDevices
 | where OS contains "Android (dedicated)"
 | summarize dcount(DeviceId) by OSVersion
