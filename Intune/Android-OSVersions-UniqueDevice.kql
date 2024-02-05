@@ -1,0 +1,24 @@
+IntuneDevices
+| where OS contains "Android (device administrator)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
+
+IntuneDevices
+| where OS contains "Android (personally-owned work profile)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
+
+IntuneDevices
+| where OS contains "Android (corporate-owned work profile)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
+
+IntuneDevices
+| where OS contains "Android (dedicated)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
+
+IntuneDevices
+| where OS contains "Android (fully managed)"
+| summarize dcount(DeviceId) by OSVersion
+| render columnchart
