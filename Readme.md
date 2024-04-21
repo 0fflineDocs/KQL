@@ -1,7 +1,9 @@
 ## KQL Queries
 
-#### Azure AD
+### Entra ID
+### Sentinel
+### Defender XDR
 #### Defender for Endpoint
 #### Defender for Identity
-#### Intune
-#### Sentinel
+#### Defender for OFfice 365
+### Intune
