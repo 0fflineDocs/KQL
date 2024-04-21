@@ -1,5 +1,0 @@
-// Summarize count of alerts, based on detection, service, category and severity.
-AlertInfo
-| where Timestamp > ago(30d)
-| summarize count() by DetectionSource, ServiceSource, Category, Severity
-| top 10 by count_ desc nulls last
