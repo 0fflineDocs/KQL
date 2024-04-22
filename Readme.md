@@ -1,5 +1,7 @@
 ## KQL Queries ##
 
+[Entra ID[(https://github.com/0fflineDocs/KQL/tree/master/Entra%20ID)
+
 ☁️ 
 [Defender for Cloud Apps](https://github.com/0fflineDocs/KQL/tree/master/Defender%20XDR/Defender%20for%20Cloud%20Apps) 
 
