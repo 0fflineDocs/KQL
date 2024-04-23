@@ -1,0 +1,50 @@
+// Month by month breakdown of when your Entra ID Guests signed in
+SigninLogs
+| where TimeGenerated > ago (360d)
+| where UserType == "Guest" or UserPrincipalName contains "#ext#"
+| where ResultType == 0
+| summarize arg_max(TimeGenerated, *) by UserPrincipalName
+| project TimeGenerated, UserPrincipalName
+| summarize InactiveUsers=make_set(UserPrincipalName) by startofmonth(TimeGenerated)
+
+
+// List All Guests and their Authentication Requirements (Single or Multi-factor Authentication)
+SigninLogs
+| where UserType == 'Guest'
+| project UserPrincipalName, UserType, ClientAppUsed, AuthenticationRequirement, MfaDetail, ConditionalAccessStatus
+| summarize by UserPrincipalName, AuthenticationRequirement, UserType
+
+// Visualizes the total amount of guest invites sent to those redeemed
+let timerange=180d;
+let timeframe=7d;
+AuditLogs
+| where TimeGenerated > ago (timerange)
+| where OperationName in ("Redeem external user invite", "Invite external user")
+| summarize
+    InvitesSent=countif(OperationName == "Invite external user"),
+    InvitesRedeemed=countif(OperationName == "Redeem external user invite")
+    by bin(TimeGenerated, timeframe)
+| render columnchart
+    with (
+    title="Guest Invites Sent v Guest Invites Redeemed",
+    xtitle="Invites",
+    kind=unstacked)
+ 
+// Lists guests who have been invited but not yet redeemed their invites. Excludes newly invited guests (last 30 days).
+let timerange=180d;
+let timeframe=30d;
+AuditLogs
+| where TimeGenerated between (ago(timerange) .. ago(timeframe)) 
+| where OperationName == "Invite external user"
+| extend GuestUPN = tolower(tostring(TargetResources[0].userPrincipalName))
+| project TimeGenerated, GuestUPN
+| join kind=leftanti  (
+    AuditLogs
+    | where TimeGenerated > ago (timerange)
+    | where OperationName == "Redeem external user invite"
+    | where CorrelationId <> "00000000-0000-0000-0000-000000000000"
+    | extend d = tolower(tostring(TargetResources[0].displayName))
+    | parse d with * "upn: " GuestUPN "," *
+    | project TimeGenerated, GuestUPN)
+    on GuestUPN
+| distinct GuestUPN
