@@ -1,3 +1,8 @@
+// Conditional Access - Audit on policy
+AuditLogs 
+| where Category == "Policy"
+| project  ActivityDateTime, ActivityDisplayName , TargetResources[0].displayName, InitiatedBy.user.userPrincipalName
+
 // Conditional Access - All successful authentications
 SigninLogs
 | where ConditionalAccessStatus == "success"
