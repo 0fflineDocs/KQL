@@ -1,0 +1,40 @@
+// Creates a list of your applications and summarizes successful signins by members vs guests
+let timerange=30d;
+SigninLogs
+| where TimeGenerated > ago(timerange)
+| project TimeGenerated, UserType, ResultType, AppDisplayName
+| where ResultType == 0
+| summarize
+    MemberSignins=countif(UserType == "Member"),
+    GuestSignins=countif(UserType == "Guest")
+    by AppDisplayName
+| sort by AppDisplayName
+
+// Applications - total sign ins to each vs distinct sign ins
+SigninLogs
+| where TimeGenerated > ago(30d)
+| where ResultType == 0
+| summarize ['Total Signins']=count(), ['Distinct User Signins']=dcount(UserPrincipalName) by AppDisplayName | sort by ['Distinct User Signins'] desc 
+ 
+// Applications - Members vs guests, per application
+SigninLogs
+| where TimeGenerated > ago(30d)
+| where ResultType == 0
+| summarize ['Distinct Member Signins']=dcountif(UserPrincipalName, UserType == "Member"), ['Distinct Guest Signins']=dcountif(UserPrincipalName, UserType == "Guest")  by AppDisplayName | sort by ['Distinct Guest Signins'] 
+ 
+// Recently created Entra ID principals created by new user accounts 
+let NewUsers = AuditLogs
+    | where OperationName == "Add user"
+    | extend UserID = tostring(TargetResources[0].id)
+    | project NewUser = TargetResources[0].userPrincipalName, UserID, UserCreated = TimeGenerated;
+let NewServicePrincipals = AuditLogs
+    | where OperationName == "Add service principal"
+    | project ServicePrincipalDisplayName = TargetResources[0].displayName, ServicePrincipalCreated = TimeGenerated, InitiatedBy = InitiatedBy.user.userPrincipalName;
+NewServicePrincipals
+    | extend InitiatedBy = tostring(InitiatedBy)
+    | join kind=inner (
+        NewUsers
+        | extend NewUser = tostring(NewUser)
+    ) on $left.InitiatedBy == $right.NewUser
+    | project ServicePrincipalDisplayName, ServicePrincipalCreated, InitiatedBy, UserCreated, UserID
+    | order by ServicePrincipalCreated
