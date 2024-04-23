@@ -1,5 +1,4 @@
 // Admin registered temporary access pass method for user
-
 AuditLogs 
 | where ResultDescription == "Admin registered temporary access pass method for user"
  
