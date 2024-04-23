@@ -1,0 +1,19 @@
+// Changes in MFA registration methods for endusers
+AuditLogs
+| where OperationName == "User registered security info" or OperationName == "User deleted security info"
+| where TimeGenerated between (datetime("2023-09-01 00:00") .. datetime("2023-09-07 00:00"))
+| extend userPrincipalName_ = tostring(parse_json(tostring(InitiatedBy.user)).userPrincipalName)
+| project TimeGenerated,userPrincipalName_,ResultDescription,Result
+ 
+// Phone number registered for multiple users
+AuditLogs
+| where TimeGenerated > ago (30d)
+| where Result == "success"
+| where Identity == "Azure Credential Configuration Endpoint Service"
+| where OperationName == "Update user"
+| extend UserPrincipalName = tostring(TargetResources[0].userPrincipalName)
+| extend PhoneNumber = tostring(parse_json(tostring(parse_json(tostring(TargetResources[0].modifiedProperties))[1].newValue))[0].PhoneNumber)
+| where isnotempty(PhoneNumber)
+| summarize Users=make_set(UserPrincipalName) by PhoneNumber
+| extend CountofUsers=array_length(Users)
+| where CountofUsers > 1
