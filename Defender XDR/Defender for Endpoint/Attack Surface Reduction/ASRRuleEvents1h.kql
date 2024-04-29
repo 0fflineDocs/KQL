@@ -1,0 +1,4 @@
+DeviceEvents
+| where ActionType startswith "Asr"
+| summarize count() by ActionType, bin(Timestamp, 1h)
+| render timechart
