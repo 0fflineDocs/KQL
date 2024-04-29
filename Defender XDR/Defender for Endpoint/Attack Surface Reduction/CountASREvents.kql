@@ -1,0 +1,5 @@
+// Count Attack Surface Reduction rules events.
+DeviceEvents
+| where ActionType startswith "Asr"
+| summarize count() by ActionType
+| order by count_ desc
