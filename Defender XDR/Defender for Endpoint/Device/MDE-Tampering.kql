@@ -1,0 +1,6 @@
+// MDE Tampering
+DeviceEvents 
+| where ActionType == "TamperingAttempt" 
+| extend AdditionalInfo = parse_json(AdditionalFields) 
+| extend Status = AdditionalInfo.['Status']
+| extend Target = AdditionalInfo.['Target']
