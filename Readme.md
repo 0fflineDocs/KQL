@@ -16,6 +16,3 @@
 
 💻
 [Intune](https://github.com/0fflineDocs/KQL/tree/master/Intune)
-
-👁️‍🗨️
-[Sentinel](https://github.com/0fflineDocs/KQL/tree/master/Sentinel)
