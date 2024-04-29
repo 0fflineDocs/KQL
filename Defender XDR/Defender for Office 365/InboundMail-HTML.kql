@@ -1,0 +1,15 @@
+// Hunt for all inbound emails with HTML attachments and compile list of URLs
+let HTMLfile = (EmailAttachmentInfo
+| where FileType =~ "html");
+let HTMLurl = (EmailUrlInfo
+| where UrlLocation == "Attachment"
+| summarize HTMLfile_URL_list =  make_list(Url) by NetworkMessageId);
+let Emailurl = (EmailUrlInfo
+| where UrlLocation == "Body"
+| summarize Email_URL_list = make_list(Url) by NetworkMessageId);
+EmailEvents
+| where EmailDirection == "Inbound"
+| join kind = inner HTMLfile on NetworkMessageId
+| join kind = inner HTMLurl on NetworkMessageId
+| join kind = leftouter Emailurl on NetworkMessageId
+| project Timestamp, ReportId, NetworkMessageId, SenderFromAddress, RecipientEmailAddress, FileName, FileType, ThreatTypes, ThreatNames, HTMLfile_URL_list, Email_URL_list
