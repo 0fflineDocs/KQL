@@ -1,0 +1,10 @@
+// Hunt for QR Code Emails 
+EmailAttachmentInfo
+| where Timestamp > ago(30d)
+| where FileType contains "png"
+| where FileName matches regex "^[A-Z0-9]{9,10}\\.[A-Za-z0-9]+$"
+| where SenderFromAddress !contains "EXCLUDE DOMAIN" //Exclude your corporate domain
+| where RecipientObjectId != ""
+| join EmailEvents on NetworkMessageId
+| where DeliveryAction != "Blocked"
+| where DeliveryAction != "Junked"
