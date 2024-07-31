@@ -7,4 +7,4 @@
 [Defender for Office 365](https://github.com/0fflineDocs/KQL/tree/master/Defender%20XDR/Defender%20for%20Office%20365) |
 [Intune](https://github.com/0fflineDocs/KQL/tree/master/Intune) 
 
-![Visualize-KQL](https://github.com/user-attachments/assets/a8244fb2-5207-407b-931b-6277dbd4c399)
+![VisualizeKQL-Dark](https://github.com/user-attachments/assets/d7207b47-9b73-40cd-b520-8ce9b66baed4)
