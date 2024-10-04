@@ -1,0 +1,14 @@
+// Severity
+SecurityAlert
+| summarize count() by Severity
+| render piechart 
+
+// Products
+SecurityAlert
+| summarize count() by ProductName
+| render piechart 
+
+// Tactics
+SecurityAlert
+| summarize count() by Tactics
+| render piechart 
