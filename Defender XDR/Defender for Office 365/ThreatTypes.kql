@@ -1,2 +1,3 @@
+//Project all threat types and detection methods
 EmailPostDeliveryEvents 
 | project ThreatTypes, DetectionMethods
