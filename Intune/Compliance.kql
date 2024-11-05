@@ -1,0 +1,11 @@
+// Compliant
+IntuneDeviceComplianceOrg 
+| where isnotempty(DeviceName)
+| where ComplianceState == "Compliant"
+| summarize count() by OSDescription, OSVersion
+
+// Not compliant
+IntuneDeviceComplianceOrg 
+| where isnotempty(DeviceName)
+| where ComplianceState == "Not compliant"
+| summarize count() by OSDescription, OSVersion
