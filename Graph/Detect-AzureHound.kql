@@ -1,0 +1,5 @@
+// Detect AzureHound
+MicrosoftGraphActivityLogs
+| extend ParsedUri = tostring(parse_url(RequestUri).Path)
+| summarize TotalRequest = count() by ParsedUri
+| sort by TotalRequest
