@@ -1,7 +1,7 @@
 // Shadow IT Reporting
 McasShadowItReporting
 | where TimeGenerated > ago (90d)
-| where StreamName == "Win10 Endpoint Users"
+| where StreamName == "Defender-managed endpoints"
 | summarize Totalbytes = sum(TotalBytes), UploadBytes = sum( UploadedBytes), DownloadBytes = sum(DownloadedBytes), Users = make_set(EnrichedUserName), Devices = make_set(MachineName), IPAddresses = make_set(IpAddress)  by AppName, AppScore
 | extend TotalDevices = array_length(Devices)
 | extend TotalIPAddresses = array_length(IPAddresses)
