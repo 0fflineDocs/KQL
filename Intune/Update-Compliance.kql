@@ -1,3 +1,8 @@
+// Count device by OSVersion
+UCClient
+| summarize Count = count() by OSVersion
+| render columnchart 
+
 // Update Alerts
 UCUpdateAlert
 | summarize count() by AlertSubtype
