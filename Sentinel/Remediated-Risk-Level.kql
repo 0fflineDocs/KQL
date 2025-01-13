@@ -1,4 +1,7 @@
 // https://x.com/ITguySoCal/status/1877982636251201912
+
+// Analytic Rule - Investigate Remediated MFA Claim/Risky Users
+
 let a=(
 AADRiskyUsers
 | where RiskLevel in ('medium','high') and RiskDetail !in('adminConfirmedUserCompromised','adminConfirmedSigninCompromised') 
