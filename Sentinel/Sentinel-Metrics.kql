@@ -1,0 +1,9 @@
+// List all incidents
+let startTime = ago(30d);
+let endTime = now();
+SecurityIncident
+| where TimeGenerated >= startTime
+| summarize arg_max(TimeGenerated, *) by IncidentNumber
+| where LastModifiedTime  between (startTime .. endTime)
+| where Status in  ('New', 'Active', 'Closed')
+| where Severity in ('High','Medium','Low', 'Informational')
