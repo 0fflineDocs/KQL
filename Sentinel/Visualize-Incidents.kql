@@ -1,0 +1,34 @@
+// List all incidents by Severity 
+let CollectIncidentSeverity = (TimeSpan: timespan) {
+    SecurityIncident
+    | where TimeGenerated > ago(TimeSpan)
+    | summarize arg_max(TimeGenerated, *) by IncidentNumber
+    | summarize TotalIncidents = count() by Severity
+    | render piechart 
+};
+// Example
+CollectIncidentSeverity(30d)
+
+// List all incidents by titles and include count
+let CollectIncidentStatistics = (TimeSpan: timespan) {
+    SecurityIncident
+    | where TimeGenerated > ago(TimeSpan)
+    | summarize arg_max(TimeGenerated, *) by IncidentNumber
+    | summarize TotalIncidents = count() by Title
+};
+// Example
+CollectIncidentStatistics(30d)
+
+// List all incidents by tactic
+let CollectIncidentTactics = (TimeSpan: timespan) {
+    SecurityIncident
+    | where TimeGenerated > ago(TimeSpan)
+    | summarize arg_max(TimeGenerated, *) by IncidentNumber
+    | extend TacticsArray = parse_json(AdditionalData).tactics
+    | mv-expand Tactic = TacticsArray
+    | summarize Total = count() by tostring(Tactic)
+    | sort by Total desc
+    | render piechart
+};
+// Example
+CollectIncidentTactics(30d)
