@@ -6,7 +6,6 @@ let CollectIncidentSeverity = (TimeSpan: timespan) {
     | summarize TotalIncidents = count() by Severity
     | render piechart 
 };
-// Example
 CollectIncidentSeverity(30d)
 
 // List all incidents by titles and include count
@@ -16,7 +15,6 @@ let CollectIncidentStatistics = (TimeSpan: timespan) {
     | summarize arg_max(TimeGenerated, *) by IncidentNumber
     | summarize TotalIncidents = count() by Title
 };
-// Example
 CollectIncidentStatistics(30d)
 
 // List all incidents by tactic
@@ -30,5 +28,6 @@ let CollectIncidentTactics = (TimeSpan: timespan) {
     | sort by Total desc
     | render piechart
 };
-// Example
 CollectIncidentTactics(30d)
+
+// List all incidents by alert sources
