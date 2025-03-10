@@ -29,5 +29,3 @@ let CollectIncidentTactics = (TimeSpan: timespan) {
     | render piechart
 };
 CollectIncidentTactics(30d)
-
-// List all incidents by alert sources
