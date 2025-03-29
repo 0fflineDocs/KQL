@@ -1,6 +1,6 @@
 ## KQL Queries ##
 
-### Archived Repository!
+### ⚠️ Archived Repository ⚠️
 Queries are now maintaned in KQL Library: https://kql-library.vercel.app/
 
 ---
