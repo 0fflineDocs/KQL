@@ -1,7 +1,8 @@
 ## KQL Queries ##
 
 ### ⚠️ Archived Repository ⚠️
-Queries are now maintaned in KQL Library: https://kql-library.vercel.app/
+Queries are now maintaned in KQL Library: https://kql-library.vercel.app/ \
+Repository: https://github.com/0fflineDocs/KQL-Library
 
 ---
 
