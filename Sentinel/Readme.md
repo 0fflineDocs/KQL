@@ -1,3 +1,5 @@
+# Sentinel - KQL
+
 ## DC Security Operations
 https://github.com/DanielChronlund/DCSecurityOperations/tree/main
 
