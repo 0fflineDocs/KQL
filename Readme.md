@@ -1,11 +1,5 @@
 ## KQL Queries ##
 
-### ⚠️ Archived Repository ⚠️
-Queries are now maintaned in KQL Library: https://kql-library.vercel.app/ \
-Repository: https://github.com/0fflineDocs/KQL-Library
-
----
-
 [Entra ID](https://github.com/0fflineDocs/KQL/tree/master/Entra%20ID) |
 [Sentinel](https://github.com/0fflineDocs/KQL/tree/master/Sentinel) |
 [Defender for Cloud Apps](https://github.com/0fflineDocs/KQL/tree/master/Defender%20XDR/Defender%20for%20Cloud%20Apps) |
