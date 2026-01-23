@@ -1,9 +1,0 @@
-// Suspicious MFA reset operations - actions indicating a user turned off MFA or that a MFA bypass was attempted. 
-let relevantActionTypes = pack_array("Disable Strong Authentication.","system.mfa.factor.deactivate", "user.mfa.factor.update", "user.mfa.factor.reset_all", "core.user_auth.mfa_bypass_attempted"); 
-CloudAppEvents 
-| where Timestamp > ago(1d) 
-| where isnotempty(AccountObjectId) 
-| where Application in ("Office 365","Okta") 
-| where ActionType in (relevantActionTypes) 
-| where RawEventData contains "success" 
-| project Timestamp, ReportId, AccountObjectId, IPAddress, ActionType

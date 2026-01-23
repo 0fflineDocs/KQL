@@ -1,0 +1,33 @@
+# Passwordless
+
+
+## Password vs Passwordless sign-ins per week
+
+```kql
+let timerange=180d;
+SigninLogs
+| project TimeGenerated, AuthenticationDetails
+| where TimeGenerated > ago (timerange)
+| extend AuthMethod = tostring(parse_json(AuthenticationDetails)[0].authenticationMethod)
+| where AuthMethod != "Previously satisfied"
+| summarize
+    Password=countif(AuthMethod == "Password"),
+    Passwo
+    by startofweek(TimeGenerated)
+| render timechart with ( xtitle="Week", ytitle="Signin Count", title="Password vs Passwordless signins per week")
+rdless=countif(AuthMethod in ("FIDO2 security key", "Passwordless phone sign-in", "Windows Hello for Business", "Mobile app notification","X.509 Certificate")) 
+```
+
+
+## Passwordless Methods per week
+
+```kql
+let timerange=180d;
+SigninLogs
+| project TimeGenerated, AuthenticationDetails
+| where TimeGenerated > ago (timerange)
+| extend AuthMethod = tostring(parse_json(AuthenticationDetails)[0].authenticationMethod)
+| where AuthMethod in ("FIDO2 security key", "Passwordless phone sign-in", "Windows Hello for Business", "Mobile app notification","X.509 Certificate")
+| summarize ['Passwordless Method']=count()by AuthMethod, startofweek(TimeGenerated)
+| render timechart with ( xtitle="Week", ytitle="Signin Count", title="Passwordless methods per week")
+```

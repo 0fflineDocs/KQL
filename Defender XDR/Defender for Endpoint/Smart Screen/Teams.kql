@@ -1,7 +1,0 @@
-//Smart Screen URL Warnings - Teams
-DeviceEvents
-| where ActionType == "SmartScreenUrlWarning"
-| join (DeviceEvents | where ActionType == "BrowserLaunchedToOpenUrl" | extend OpeningProcess = InitiatingProcessFileName) on DeviceId, RemoteUrl
-| extend TeamsUser = InitiatingProcessAccountUpn1
-| where OpeningProcess =~ "teams.exe"
-| project-reorder DeviceName, RemoteUrl, OpeningProcess, TeamsUser

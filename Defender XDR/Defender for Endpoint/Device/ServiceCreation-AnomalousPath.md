@@ -1,0 +1,15 @@
+# ServiceCreation AnomalousPath
+
+
+## New service creations with anomalous path
+
+
+## 'New service creations should be monitored for anomalous paths or executables since this tactic is often used by malicious actors. This is a common privilege escalation technique.'
+
+```kql
+DeviceEvents
+| where ActionType == "ServiceInstalled"
+| where FolderPath in ("C:\\Temp\\", "C:\\ProgramData\\", "C:\\Windows\\", "C:\\Windows\\Temp\\", "C:\\")
+| project TimeGenerated, ServiceName=AdditionalFields.ServiceName, ServiceAccount=AdditionalFields.ServiceAccount, DeviceName, DeviceId, FolderPath, FileName, InitiatingProcessAccountUpn, InitiatingProcessAccountName, InitiatingProcessAccountObjectId
+| order by TimeGenerated desc
+```

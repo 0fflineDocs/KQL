@@ -1,0 +1,13 @@
+# CloudApp Sharing
+
+
+## Gives a list of sharing activities in cloud apps
+
+
+## Includes invitations, acceptances, requests and approvals for sharing files and folders in the cloud
+
+```kql
+CloudAppEvents
+| where ActivityType == "Share"
+| take 100 
+```

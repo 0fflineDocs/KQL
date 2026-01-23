@@ -1,0 +1,155 @@
+# Operational Queries
+
+
+## All audit events sorted
+
+```kql
+IntuneAuditLogs 
+|summarize Auditevents = count() by OperationName 
+| sort by Auditevents 
+```
+
+
+## All Managed Device operations audited
+
+```kql
+IntuneAuditLogs 
+| where OperationName contains "Managed Device"
+| summarize count() by OperationName
+| render piechart
+```
+
+
+## Changes to configurations in Intune
+
+```kql
+IntuneAuditLogs
+| where OperationName contains "patch"
+| extend User = todynamic(Properties).Actor.UPN
+| extend Apps = todynamic(Properties).Actor.ApplicationName
+| extend Device = todynamic(Properties).TargetObjectIds
+| extend Policy = replace_regex(tostring(todynamic(Properties).TargetDisplayNames), @'["[]]', "")
+| mv-expand todynamic(Properties).Targets[0].ModifiedProperties
+| extend Configuration = todynamic(Properties_Targets_0_ModifiedProperties).Name
+| extend ['New Value'] = todynamic(Properties_Targets_0_ModifiedProperties).New
+| extend ['Old Value'] = todynamic(Properties_Targets_0_ModifiedProperties).Old
+| where isnotempty(['Old Value'])
+| where isnotempty(['New Value'])
+| where isnotempty(User)
+| project Time = TimeGenerated, Policy, Configuration, ['New Value'], ['Old Value'], User
+| sort by Time desc
+```
+
+
+## Managed Device Operations
+
+```kql
+IntuneOperationalLogs
+| where OperationName contains "Managed Device"
+```
+
+
+## Count Managed Device Operations
+
+```kql
+IntuneAuditLogs 
+| where OperationName contains "Managed Device"
+| summarize count() by OperationName
+| render piechart
+```
+
+
+## Enrollments piechart
+
+```kql
+IntuneOperationalLogs
+| where OperationName contains "Enrollment"
+| Render piechart
+```
+
+
+## Enrollment by OS
+
+```kql
+IntuneOperationalLogs 
+| where OperationName == "Enrollment"  
+```
+
+
+## use extend to expand properties column so we can use this data in our query
+
+```kql
+| extend propertiesJson = todynamic(Properties) 
+| extend OsType = tostring(propertiesJson ["Os"]) 
+| project OsType  
+| summarize count() by OsType 
+| render piechart  
+```
+
+
+## Failed Enrollments by OS
+
+```kql
+IntuneOperationalLogs
+| extend DeviceId = tostring(todynamic(Properties).IntuneDeviceId)
+| extend OS = tostring(todynamic(Properties).Os)
+| extend ['Failure Reason'] = tostring(todynamic(Properties).FailureReason)
+| extend ['Intune Device ID'] = tostring(todynamic(Properties).IntuneDeviceId)
+| extend ['Time of Enrollment String'] = tostring(todynamic(Properties).EnrollmentTimeUTC)
+| extend Date=format_datetime(todatetime(['Time of Enrollment String']), "dd.MM.yyyy")
+| extend Time=format_datetime(todatetime(['Time of Enrollment String']), "hh:mm tt")
+| extend ['Time of Enrollment']=strcat(Date," ",Time)
+| extend ['Enrollment Type'] = tostring(todynamic(Properties).EnrollmentType)
+| where Result == "Fail"
+| where OperationName has "Enrollment"
+| project ['Time of Enrollment'], ['Enrollment Type'], OS, ['Intune Device ID'], ['Failure Reason']
+| sort by ['Time of Enrollment'] desc
+```
+
+
+## Successfull Enrollments by OS
+
+```kql
+IntuneOperationalLogs
+| extend DeviceId = tostring(todynamic(Properties).IntuneDeviceId)
+| extend OS = tostring(todynamic(Properties).Os)
+| extend ['Failure Reason'] = tostring(todynamic(Properties).FailureReason)
+| extend ['Intune Device ID'] = tostring(todynamic(Properties).IntuneDeviceId)
+| extend ['Time of Enrollment String'] = tostring(todynamic(Properties).EnrollmentTimeUTC)
+| extend Date=format_datetime(todatetime(['Time of Enrollment String']), "dd.MM.yyyy")
+| extend Time=format_datetime(todatetime(['Time of Enrollment String']), "hh:mm tt")
+| extend ['Time of Enrollment']=strcat(Date," ",Time)
+| extend ['Enrollment Type'] = tostring(todynamic(Properties).EnrollmentType)
+| where Result == "Success"
+| where OperationName has "Enrollment"
+| project ['Time of Enrollment'], ['Enrollment Type'], OS, ['Intune Device ID'], Result
+| sort by ['Time of Enrollment'] desc
+```
+
+
+## Summarize and count non-compliant per category
+
+```kql
+let ComplianceLogs= 
+IntuneOperationalLogs  
+| where OperationName == "Compliance"  
+| project TimeGenerated, Properties; 
+ComplianceLogs 
+| sort by TimeGenerated desc 
+| join ( 
+ComplianceLogs 
+| extend myJson = todynamic(Properties) 
+| project-away Properties 
+| extend IntuneDeviceId=tostring(myJson["IntuneDeviceId"])  
+| project TimeGenerated, IntuneDeviceId 
+| summarize TimeGenerated=max(TimeGenerated) by IntuneDeviceId     
+) on TimeGenerated 
+| project-away TimeGenerated1, IntuneDeviceId   
+| extend myJson=todynamic(Properties) 
+| project-away Properties 
+| extend Description=tostring(myJson["Description"]) 
+| extend Description=tostring(extract("(.*?)_IID_.*", 1, tostring(Description))) 
+| extend Reason = tostring(extract("(.*?)\\.(.*)", 2, tostring(Description))) 
+| summarize FailureCount=count() by Reason  
+| sort by FailureCount desc 
+```

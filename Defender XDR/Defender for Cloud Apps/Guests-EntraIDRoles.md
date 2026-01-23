@@ -1,0 +1,36 @@
+# Guests EntraIDRoles
+
+
+## Search for new guest accounts who have been promoted to certain Entra ID Roles.
+
+```kql
+let Roles = pack_array("Company Administrator");
+let newGuestAccounts = (
+CloudAppEvents
+| where Timestamp > ago(30d)
+| where ActionType == "Add user."
+| where RawEventData.ResultStatus == "Success"
+| where RawEventData has "guest" and RawEventData.ObjectId has "#EXT#"
+| mv-expand Property = RawEventData.ModifiedProperties
+| where Property.Name == "AccountEnabled" and Property.NewValue has "true"
+| project CreationTimestamp = Timestamp, AccountObjectId, AccountDisplayName, newGuestAccount = RawEventData.ObjectId,newGuestAccountObjectId = tostring(RawEventData.Target[1].ID), UserAgent);
+let promotedAccounts = (
+CloudAppEvents
+| where Timestamp > ago(7d)
+| where isnotempty(AccountObjectId)
+| where ActionType == "Add member to role."
+| where RawEventData.ResultStatus == "Success"
+| where RawEventData has_any(Roles) 
+| where RawEventData.Actor has "User"
+| project PromoteTimestamp = Timestamp, PromotedUserAccountObjectId = tostring(RawEventData.Target[1].ID));
+```
+
+
+## join the two tables
+
+```kql
+newGuestAccounts
+| join promotedAccounts on $left.newGuestAccountObjectId == $right.PromotedUserAccountObjectId
+| where PromoteTimestamp  > CreationTimestamp
+| project CreationTimestamp, PromoteTimestamp, PromotedUserAccountObjectId, newGuestAccount, newGuestAccountObjectId
+```

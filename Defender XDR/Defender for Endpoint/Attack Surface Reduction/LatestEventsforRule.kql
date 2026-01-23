@@ -1,3 +1,0 @@
-// Get latest events for a specific Attack Surface Reduction rule
-DeviceEvents
-| where ActionType == "AsrOfficeCommAppChildProcessAudited"

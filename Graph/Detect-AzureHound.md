@@ -1,0 +1,12 @@
+# Detect AzureHound
+
+
+## Detect AzureHound
+
+```kql
+MicrosoftGraphActivityLogs
+| where UserAgent has "azurehound"
+| extend ObjectId = iff(isempty(UserId), ServicePrincipalId, UserId)
+| extend ObjectType = iff(isempty(UserId), "ServicePrincipalId", "UserId")
+| summarize by ObjectId, ObjectType
+```

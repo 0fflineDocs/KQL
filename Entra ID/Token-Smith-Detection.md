@@ -1,0 +1,43 @@
+# Token Smith Detection
+
+
+## https://quzara.com/blog/bypass-intune-conditional-access-using-tokensmith-detection-response
+
+
+## https://labs.jumpsec.com/tokensmith-bypassing-intune-compliant-device-conditional-access/
+
+```kql
+
+AADSignInEventsBeta
+| where ApplicationId == "9ba1a5c7-f17a-4de9-a1f1-6178c8d51223"
+and ErrorCode == "0"
+| extend CAP = parse_json(ConditionalAccessPolicies)
+| mv-expand CAP
+| where (CAP.enforcedGrantControls has "RequireCompliantDevice" and CAP.result == "failure")
+or (CAP.enforcedGrantControls has "Block" and CAP.result == "notApplied")
+and IsCompliant == "0"
+| project
+ Timestamp,
+ AccountDisplayName,
+ AccountUpn,
+ Application,
+ ApplicationId,
+ EndpointCall,
+ LogonType,
+ ErrorCode,
+ CAP.displayName,
+ CAP.result,
+ SessionId,
+ ResourceDisplayName,
+ DeviceName,
+ AadDeviceId,
+ IsCompliant,
+ IsManaged,
+ Browser,
+ IPAddress,
+ CAP.enforcedGrantControls,
+ CAP.conditionsSatisfied,
+ CAP.conditionsNotSatisfied,
+ CAP.includeRulesSatisfied,
+ ConditionalAccessStatus
+```

@@ -1,0 +1,15 @@
+# Sensitivity Label Changed
+
+
+## Sensitivity Label Changed
+
+```kql
+CloudAppEvents
+| where ActionType in~ ("FileSensitivityLabelChanged", "SensitivityLabelUpdated", "FileSensitivityLabelRemoved", "SensitivityLabelRemoved")
+| extend Data = parse_json(tostring(RawEventData))
+| extend SourceFileName = iif(ActionType == "FileSensitivityLabelChanged", tostring(Data.SourceFileName), tostring(Data.ObjectId))
+| extend SiteUrl = Data.SiteUrl
+| extend OldLabel = Data.SensitivityLabelEventData.OldSensitivityLabelId
+| extend NewLabel = Data.SensitivityLabelEventData.SensitivityLabelId
+| project Timestamp, ActionType, SourceFileName, SiteUrl, OldLabel, NewLabel
+```

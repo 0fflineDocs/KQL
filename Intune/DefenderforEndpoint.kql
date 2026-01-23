@@ -1,5 +1,0 @@
-// Non-secured MDE-devices
-IntuneDeviceComplianceOrg
-| where isnotempty(DeviceHealthThreatLevel)
-| where DeviceHealthThreatLevel != "Secured"
-| project TimeGenerated, DeviceName, DeviceId, OS, UserName, DeviceHealthThreatLevel

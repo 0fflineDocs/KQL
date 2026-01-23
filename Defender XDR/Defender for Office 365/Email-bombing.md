@@ -1,0 +1,15 @@
+# Email bombing
+
+
+## Potential email bombing activity
+
+```kql
+EmailEvents
+| where EmailDirection == "Inbound"
+| make-series Emailcount = count()
+on Timestamp step 1h by RecipientObjectId
+| extend (Anomalies, AnomalyScore, ExpectedEmails) = series_decompose_anomalies(Emailcount)
+| mv-expand Emailcount, Anomalies, AnomalyScore, ExpectedEmails to typeof(double), Timestamp
+| where Anomalies != 0
+| where AnomalyScore >= 10
+```

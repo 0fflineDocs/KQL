@@ -1,0 +1,18 @@
+# ShadowIT
+
+
+## Shadow IT Reporting
+
+```kql
+McasShadowItReporting
+| where TimeGenerated > ago (90d)
+| where StreamName == "Defender-managed endpoints"
+| summarize Totalbytes = sum(TotalBytes), UploadBytes = sum( UploadedBytes), DownloadBytes = sum(DownloadedBytes), Users = make_set(EnrichedUserName), Devices = make_set(MachineName), IPAddresses = make_set(IpAddress)  by AppName, AppScore
+| extend TotalDevices = array_length(Devices)
+| extend TotalIPAddresses = array_length(IPAddresses)
+| extend Totalusers = array_length(Users)
+| extend UploadMB = format_bytes(UploadBytes,0,"MB")
+| extend TotalTraffic = format_bytes(Totalbytes,0,"MB")
+| extend DownloadMB = format_bytes(DownloadBytes,0,"MB")
+| project AppName,AppScore, TotalDevices, TotalIPAddresses, Totalusers, TotalTraffic, UploadMB, DownloadMB, IPAddresses, Devices, Users
+```

@@ -1,0 +1,21 @@
+# Cloud File Hosting Phishing
+
+
+## https://www.microsoft.com/en-us/security/blog/2024/10/08/file-hosting-services-misused-for-identity-phishing/
+
+
+## Files with specific keywords shared with and accessed by over 10 unique users.
+
+```kql
+let OperationName = dynamic(['SecureLinkCreated', 'AddedToSecureLink']);
+OfficeActivity
+| where Operation in (OperationName)
+| where OfficeWorkload in ('OneDrive', 'SharePoint')
+| where SourceFileName has_any ("payment", "invoice", "urgent", "mandatory", "Payoff", "Wire", "Confirmation", "password", "paycheck", "bank statement", "bank details", "closing", "funds", "bank account", "account details", "remittance", "deposit", "Reset")
+| summarize CountOfShares = dcount(TargetUserOrGroupName), 
+            make_list(TargetUserOrGroupName), 
+            make_list(ClientIP), 
+            make_list(TimeGenerated), 
+            make_list(SourceRelativeUrl) by SourceFileName, OfficeWorkload
+| where CountOfShares > 10
+```

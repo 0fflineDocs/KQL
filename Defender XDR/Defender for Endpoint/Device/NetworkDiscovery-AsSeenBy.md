@@ -1,0 +1,11 @@
+# NetworkDiscovery AsSeenBy
+
+```kql
+DeviceInfo
+| where OnboardingStatus != "Onboarded" 
+| summarize arg_max(Timestamp, *) by DeviceId 
+| where isempty(MergedToDeviceId) 
+| limit 100 
+| invoke SeenBy() 
+| project DeviceId, DeviceName, DeviceType, OSVersion, Model, SeenBy
+```

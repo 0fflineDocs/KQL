@@ -1,2 +1,0 @@
-// Find out what users are disabled. 
-IdentityInfo | where IsAccountEnabled == “0” | summarize arg_max(AccountName,*) by AccountUpn
