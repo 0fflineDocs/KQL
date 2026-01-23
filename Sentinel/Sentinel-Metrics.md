@@ -17,9 +17,6 @@ SecurityIncident
 
 ## List all Incidents including types and present severity, time to close, types etc.
 
-
-## Source: https://secbyte.in/2024/08/18/mastering-sentinel-the-essential-kql-query-for-every-soc-team/<
-
 ```kql
 SecurityIncident
 | where TimeGenerated >= ago(30d)
@@ -86,3 +83,5 @@ SecurityIncident
     SeverityDistribution
 | sort by TotalIncidents desc
 ```
+
+Source: https://secbyte.in/2024/08/18/mastering-sentinel-the-essential-kql-query-for-every-soc-team/
