@@ -1,3 +1,11 @@
+// Find all agents owned by external users
+AIAgentsInfo
+| where CreatedByUPN !endswith "@yourorgdomain.com"
+
+// Find agents not used within the last X days
+AIAgentsInfo
+| where LastPublishedDateTime < ago(Xd)
+
 // Agents with no authenticaiton
 AIAgentsInfo
 | summarize arg_max(Timestamp, *) by AIAgentId
