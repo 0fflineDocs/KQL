@@ -31,13 +31,14 @@ AIAgentsInfo
 ## Suspicious HTTP request to nonstandard port
 
 ```kql
-AIAgentsInfo
+
 ```
 
 
 ## Find agents with topic that contains Http request action to non 443 port
 
 ```kql
+AIAgentsInfo
 | summarize arg_max(Timestamp, *) by AIAgentId
 | where AgentStatus != "Deleted"
 | mvexpand Topic = AgentTopicsDetails
