@@ -1,5 +1,8 @@
 ## KQL Queries ##
 
+Curated Kusto (KQL) queries for Microsoft security products, organized by product. Each Markdown file groups related queries under short descriptive headings. For a searchable web version, see [KQL Library](https://github.com/0fflineDocs/KQL-Library).
+
+
 [Entra ID](https://github.com/0fflineDocs/KQL/tree/master/Entra%20ID) |
 [Sentinel](https://github.com/0fflineDocs/KQL/tree/master/Sentinel) |
 [Defender for Cloud Apps](https://github.com/0fflineDocs/KQL/tree/master/Defender%20XDR/Defender%20for%20Cloud%20Apps) |
